@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Eclipse 2026 · Totality Finder</title>
+  <meta name="description" content="Total solar eclipse, 12 August 2026 — check if totality is visible from your location, and find the best place in Spain (or Iceland) to watch it, with live cloud forecasts.">
+  <meta name="theme-color" content="#0b1220">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>Eclipse 2026</h1>
+        <p class="sub">Total solar eclipse · Wed 12 Aug 2026 · Spain &amp; Iceland</p>
+      </div>
+    </div>
+    <div id="countdown" class="countdown" aria-live="off">–</div>
+  </header>
+
+  <main>
+    <section id="status" class="card status-card">
+      <p class="hint">Find out if the total eclipse is visible from where you are:</p>
+      <div class="controls">
+        <button id="locateBtn" class="btn primary">📍 Use my location</button>
+        <input id="citySearch" list="cityList" placeholder="…or type a city" autocomplete="off">
+        <datalist id="cityList"></datalist>
+      </div>
+      <p class="hint small">You can also tap anywhere on the map.</p>
+    </section>
+
+    <section class="card map-card">
+      <div id="map" role="application" aria-label="Eclipse path map"></div>
+      <div class="legend">
+        <span><i class="sw path"></i> Path of totality</span>
+        <span><i class="sw center"></i> Centre line (longest)</span>
+        <span><i class="sw c0"></i><i class="sw c1"></i><i class="sw c2"></i><i class="sw c3"></i> Cloud forecast</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Best places to watch <span class="muted">— ranked by cloud forecast at eclipse time</span></h2>
+      <p id="wxNote" class="hint small">Loading cloud forecast…</p>
+      <ol id="spots" class="spots"></ol>
+    </section>
+
+    <section class="card safety">
+      <h2>⚠️ Eye safety</h2>
+      <p>Use certified <strong>ISO 12312-2 eclipse glasses</strong> for every partial phase — ordinary sunglasses are not safe. Only during the brief <strong>total</strong> phase (Moon fully covering the Sun) may you look with the naked eye. In Spain the Sun will be <strong>very low in the west-northwest</strong>: choose a spot with a completely open WNW horizon (sea, plain or hilltop).</p>
+    </section>
+
+    <footer>
+      <p>Computed from NASA/GSFC Besselian elements (F. Espenak) · path edge accurate to ≈1–2 km — don't stand on the edge, move well inside · times auto-adjust to your device's time zone · cloud data: Open-Meteo · map © OpenStreetMap contributors</p>
+      <p>Works offline once installed (except map tiles &amp; forecast). Add it to your home screen for eclipse day! 🌘</p>
+    </footer>
+  </main>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
