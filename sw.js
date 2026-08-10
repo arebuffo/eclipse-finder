@@ -1,6 +1,6 @@
 // Eclipse 2026 PWA service worker — precache the app shell so everything except
 // map tiles and the cloud forecast works offline.
-const VERSION = 'eclipse26-v3';
+const VERSION = 'eclipse26-v4';
 const SHELL = [
   './',
   'index.html',

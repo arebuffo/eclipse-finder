@@ -15,7 +15,7 @@ auto-detected from the device, with a manual ES/EN toggle. Answers two questions
 
 ## Configuration knobs (top of `app.js`)
 
-- `AFFIL.amazonTag` / `AFFIL.bookingAid` — affiliate IDs for the
+- `AFFIL.amazonTagES` / `AFFIL.amazonTagUS` / `AFFIL.bookingAid` — affiliate IDs for the
   eclipse-glasses link (safety card) and the per-spot Booking stay links.
   Links work as plain links until set.
 - `CAPTURE_ENDPOINT` — where the "notify me for 2027" form posts. Ships with

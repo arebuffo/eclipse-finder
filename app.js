@@ -5,13 +5,19 @@ import { t, getLang, setLang, compass, fmtPct } from './i18n.js';
 /* ---------------------------------------------------------- monetisation --- */
 // Drop your affiliate IDs here when you have them; links work fine without.
 const AFFIL = {
-  amazonTag: 'eclipsefinders-21', // Amazon.es Associates
-  bookingAid: '',                 // e.g. '1234567' (Booking.com affiliate id)
+  amazonTagES: 'eclipsefinder-21', // Amazon.es Associates (Europe)
+  amazonTagUS: 'eclipsefinder-20', // Amazon.com Associates (Americas)
+  bookingAid: '',                  // e.g. '1234567' (Booking.com affiliate id)
 };
 function glassesUrl() {
-  const base = 'https://www.amazon.es/s?k=' + encodeURIComponent(
-    getLang() === 'es' ? 'gafas eclipse solar ISO 12312-2' : 'solar eclipse glasses ISO 12312-2');
-  return AFFIL.amazonTag ? `${base}&tag=${AFFIL.amazonTag}` : base;
+  // Amazon.com for visitors in the Americas, Amazon.es for everyone else.
+  let american = false;
+  try { american = (Intl.DateTimeFormat().resolvedOptions().timeZone || '').startsWith('America/'); } catch {}
+  const store = american ? 'com' : 'es';
+  const tag = american ? AFFIL.amazonTagUS : AFFIL.amazonTagES;
+  const q = getLang() === 'es' && !american ? 'gafas eclipse solar ISO 12312-2' : 'solar eclipse glasses ISO 12312-2';
+  const base = `https://www.amazon.${store}/s?k=` + encodeURIComponent(q);
+  return tag ? `${base}&tag=${tag}` : base;
 }
 function staysUrl(place) {
   const base = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(place) +
