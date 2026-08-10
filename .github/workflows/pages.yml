@@ -1,8 +1,11 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
-# Branch-based Pages deploy: mirrors main to gh-pages (no build step needed).
-# Pushing gh-pages auto-activates GitHub Pages on public repos, and avoids the
-# Pages-API permissions that the Actions token lacks for site creation.
+# Two deploy targets:
+#  1. GitHub Pages — mirrors main to gh-pages (branch-based Pages, no build).
+#  2. Cloudflare Workers (eclipsefinders.com) — wrangler deploy of the public
+#     files only. Runs when the CLOUDFLARE_API_TOKEN secret is configured
+#     (repo Settings → Secrets and variables → Actions: CLOUDFLARE_API_TOKEN,
+#     CLOUDFLARE_ACCOUNT_ID). Skips silently otherwise.
 on:
   push:
     branches: [main]
@@ -16,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  github-pages:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,3 +28,21 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@users.noreply.github.com
           git push origin --force HEAD:gh-pages
+
+  cloudflare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage public files
+        run: |
+          mkdir -p /tmp/stage
+          cp index.html style.css app.js i18n.js engine.mjs path-data.js \
+             sw.js manifest.webmanifest favicon.svg wrangler.jsonc /tmp/stage/
+          cp -r icons vendor /tmp/stage/
+      - name: Deploy to Cloudflare Workers
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: /tmp/stage

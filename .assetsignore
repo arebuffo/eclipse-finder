@@ -1,4 +1,7 @@
+.git/
+.wrangler/
 .github/
 dev/
 README.md
 wrangler.jsonc
+.assetsignore
