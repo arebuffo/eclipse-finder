@@ -1,0 +1,11 @@
+// Cloudflare Workers (static assets) deployment config.
+// Workers Builds runs `npx wrangler deploy` on every push to main.
+{
+  "name": "eclipse-finder",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": ".",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}
