@@ -5,8 +5,8 @@ import { t, getLang, setLang, compass, fmtPct } from './i18n.js';
 /* ---------------------------------------------------------- monetisation --- */
 // Drop your affiliate IDs here when you have them; links work fine without.
 const AFFIL = {
-  amazonTag: '',   // e.g. 'eclipsefinder-21' (Amazon.es Associates)
-  bookingAid: '',  // e.g. '1234567' (Booking.com affiliate id)
+  amazonTag: 'eclipsefinders-21', // Amazon.es Associates
+  bookingAid: '',                 // e.g. '1234567' (Booking.com affiliate id)
 };
 function glassesUrl() {
   const base = 'https://www.amazon.es/s?k=' + encodeURIComponent(

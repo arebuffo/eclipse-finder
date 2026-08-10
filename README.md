@@ -1,7 +1,8 @@
 # Eclipse Finder — Totality Finder PWA
 
 Installable, bilingual (English/Spanish) PWA for the **total solar eclipse of
-Wednesday 12 August 2026** (Iceland → northern Spain → Balearics). Language is
+Wednesday 12 August 2026** (Iceland → northern Spain → Balearics). Live at
+**[eclipsefinders.com](https://eclipsefinders.com)**. Language is
 auto-detected from the device, with a manual ES/EN toggle. Answers two questions:
 
 1. **Will I see totality from where I am?** — geolocation (or tap the map /
