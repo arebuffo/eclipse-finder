@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Eclipse 2026 · Totality Finder</title>
   <meta name="description" content="Total solar eclipse, 12 August 2026 — check if totality is visible from your location, and find the best place in Spain (or Iceland) to watch it, with live cloud forecasts. / Eclipse total del 12 de agosto de 2026: comprueba si verás la totalidad desde tu ubicación.">
-  <meta name="theme-color" content="#0b1220">
+  <meta name="theme-color" content="#06061a">
   <link rel="canonical" href="https://eclipsefinders.com/">
   <meta property="og:url" content="https://eclipsefinders.com/">
   <meta property="og:title" content="Eclipse 2026 — will you see totality? / ¿Verás la totalidad?">
@@ -17,6 +17,8 @@
   <link rel="apple-touch-icon" href="icons/icon-180.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preload" href="fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plexmono-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -25,7 +27,7 @@
     <div class="brand">
       <span class="logo" aria-hidden="true"></span>
       <div>
-        <h1>Eclipse 2026</h1>
+        <h1>Eclipse Finders</h1>
         <p class="sub" data-i18n="sub">Total solar eclipse · Wed 12 Aug 2026 · Spain &amp; Iceland</p>
       </div>
     </div>
@@ -36,8 +38,8 @@
   </header>
 
   <main>
-    <section id="status" class="card status-card">
-      <p class="hint" data-i18n="hint_find">Find out if the total eclipse is visible from where you are:</p>
+    <section id="status" class="status-card">
+      <h2 class="hero-h" data-i18n-html="hero_h1"></h2>
       <div class="controls">
         <button id="locateBtn" class="btn primary" data-i18n="btn_locate">📍 Use my location</button>
         <input id="citySearch" list="cityList" placeholder="…or type a city" autocomplete="off">
@@ -46,7 +48,7 @@
       <p class="hint small" data-i18n="hint_tap">You can also tap anywhere on the map.</p>
     </section>
 
-    <section class="card map-card">
+    <section class="map-card">
       <div id="map" role="application" aria-label="Eclipse path map"></div>
       <div class="legend">
         <span><i class="sw path"></i><span data-i18n="legend_path">Path of totality</span></span>
@@ -55,13 +57,13 @@
       </div>
     </section>
 
-    <section class="card">
-      <h2><span data-i18n="spots_h2">Best places to watch</span> <span class="muted" data-i18n="spots_sub">— ranked by cloud forecast at eclipse time</span></h2>
+    <section>
+      <h2><span data-i18n="spots_h2">Best places to watch</span><span class="muted" data-i18n="spots_sub">— ranked by cloud forecast at eclipse time</span></h2>
       <p id="wxNote" class="hint small" data-i18n="wx_loading">Loading cloud forecast…</p>
       <ol id="spots" class="spots"></ol>
     </section>
 
-    <section class="card email-card">
+    <section class="email-card">
       <h2 data-i18n="email_h2">📬 Don't miss the next one</h2>
       <p class="emailbody" data-i18n-html="email_body"></p>
       <form id="emailForm" class="controls" novalidate>
@@ -72,7 +74,7 @@
       <p id="emailMsg" class="hint small" hidden></p>
     </section>
 
-    <section class="card safety">
+    <section class="safety">
       <h2 data-i18n="safety_h2">⚠️ Eye safety</h2>
       <p data-i18n-html="safety_body"></p>
       <p class="glasses"><a id="glassesLink" href="#" target="_blank" rel="sponsored noopener" data-i18n="safety_link">🕶️ Get certified eclipse glasses (ISO 12312-2) →</a></p>

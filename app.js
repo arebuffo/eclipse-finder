@@ -1,4 +1,4 @@
-import { localCircumstances } from './engine.mjs';
+import { localCircumstances, observerState, ttHoursToUtcMs } from './engine.mjs';
 import { PATH } from './path-data.js';
 import { t, getLang, setLang, compass, fmtPct } from './i18n.js';
 
@@ -179,6 +179,60 @@ function setPoint(lat, lon, label, elev = 0, pan = false) {
   startCountdown(c);
 }
 
+// Sunset instant (Sun centre at −0.5°) after maximum, for the axis end tick.
+function sunsetMs(c, lat, lon) {
+  let lo = c.max.tt, hi = lo + 3;
+  const alt = (tt) => observerState(tt, lat, lon, 0).alt;
+  if (alt(lo) <= -0.5 || alt(hi) > -0.5) return null;
+  for (let i = 0; i < 40; i++) {
+    const m = (lo + hi) / 2;
+    if (alt(m) > -0.5) lo = m; else hi = m;
+  }
+  return ttHoursToUtcMs((lo + hi) / 2);
+}
+
+// Instrument-style contact axis: ticks positioned at their true times.
+function axisHtml(c, lat, lon) {
+  const start = c.c1?.utcMs ?? c.max.utcMs - 3.6e6;
+  let endMs, endLbl, endDim = false;
+  if (c.c4 && c.c4.alt > -0.8) { endMs = c.c4.utcMs; endLbl = t('ax_p_end'); }
+  else {
+    const ss = sunsetMs(c, lat, lon);
+    endMs = ss ?? c.c4?.utcMs ?? c.max.utcMs + 3.6e6;
+    endLbl = t('ax_sunset'); endDim = true;
+  }
+  const span = Math.max(1, endMs - start);
+  const X = (ms) => (Math.max(1.5, Math.min(98.5, (ms - start) / span * 100))).toFixed(2);
+  const ticks = [{ x: X(start), lbl: t('ax_c1'), time: fmtTime(start), cls: 'anchor-l' }];
+  let seg = '';
+  if (c.type === 'total' && c.c2 && c.c3) {
+    const x2 = X(c.c2.utcMs), x3 = X(c.c3.utcMs);
+    seg = `<div class="totseg" style="left:${x2}%;width:${Math.max(0.7, x3 - x2).toFixed(2)}%"></div>`;
+    ticks.push({ x: x2, lbl: t('ax_tot'), time: fmtTime(c.c2.utcMs), cls: 'hot anchor-r' });
+    ticks.push({ x: x3, lbl: t('ax_end'), time: fmtTime(c.c3.utcMs), cls: 'hot anchor-l stag' });
+  } else {
+    ticks.push({ x: X(c.max.utcMs), lbl: t('ax_max'), time: fmtTime(c.max.utcMs), cls: 'hot anchor-c' });
+  }
+  ticks.push({ x: X(endMs), lbl: endLbl, time: fmtTime(endMs), cls: (endDim ? 'dim ' : '') + 'anchor-r' });
+  return `<div class="axis"><div class="line"></div>${seg}${ticks.map((k) =>
+    `<div class="tick ${k.cls}" style="left:${k.x}%"><i>${k.lbl}</i><s>${k.time}</s></div>`).join('')}</div>`;
+}
+
+// Dusk horizon with the Sun drawn at its real altitude for this location.
+function horizonHtml(alt, az) {
+  const a = Math.max(-2, Math.min(25, alt));
+  const cy = (118 - (a / 25) * 82).toFixed(1);
+  const label = `${compass(az)} · ${fmtPct(alt, 1)}°`;
+  return `<div class="horizon"><svg viewBox="0 0 420 150" aria-hidden="true">
+    <defs><radialGradient id="sg"><stop offset="30%" stop-color="#ffe9bf"/><stop offset="100%" stop-color="#ffe9bf" stop-opacity="0"/></radialGradient></defs>
+    <text x="210" y="${cy - 34}" fill="#ffd9a8" font-size="13" text-anchor="middle" font-family="Plex Mono, monospace" letter-spacing="2.5">${label}</text>
+    <circle cx="210" cy="${cy}" r="34" fill="url(#sg)" opacity=".55"/>
+    <circle cx="210" cy="${cy}" r="13" fill="#ffe9bf"/>
+    <circle cx="210" cy="${cy}" r="22" fill="none" stroke="#ffd9a8" stroke-opacity=".5" stroke-dasharray="2 6"/>
+    <path d="M0,122 L52,116 116,125 190,112 262,123 330,115 420,120 L420,150 0,150 Z" fill="#05040f"/>
+  </svg></div>`;
+}
+
 function briefHtml(label, c) {
   const name = label || t('tapped');
   if (!c) return `<div class="pop"><b class="n">${t('pop_none', { name })}</b></div>`;
@@ -212,19 +266,14 @@ function renderCard() {
   } else if (c.type === 'total' && c.max.alt > -0.3) {
     cls = 'total';
     const lowSun = c.max.alt < 12;
-    const sunset = c.c4 && c.c4.alt < -0.8;
     body = `
       <p class="verdict total">${t('v_total')}</p>
       <p class="locname">${t('v_total_sub', { name })}</p>
       <div class="bigstat">${t('big_total', { dur: fmtDur(c.totalitySec) })}</div>
-      <div class="timeline">
-        <div class="tl"><span>${t('tl_p_start')}</span><b>${fmtTime(c.c1?.utcMs)}</b></div>
-        <div class="tl hot"><span>${t('tl_totality')}</span><b>${fmtTime(c.c2.utcMs)}</b></div>
-        <div class="tl hot"><span>${t('tl_t_end')}</span><b>${fmtTime(c.c3.utcMs)}</b></div>
-        <div class="tl"><span>${sunset ? t('tl_sunset') : t('tl_p_end')}</span><b>${sunset ? '—' : fmtTime(c.c4?.utcMs)}</b></div>
-      </div>
+      ${axisHtml(c, lat, lon)}
       <p class="hint small">${t('times_note')}</p>
-      <div class="advice">${t('advice_sun', { alt: c.max.alt.toFixed(1), dir: compass(c.max.az), az: c.max.az.toFixed(0) })}${lowSun ? t('advice_low', { dir: compass(c.max.az) }) : ''}<span id="ptCloud"></span></div>`;
+      ${horizonHtml(c.max.alt, c.max.az)}
+      <div class="advice">${t('advice_sun', { alt: fmtPct(c.max.alt, 1), dir: compass(c.max.az), az: c.max.az.toFixed(0) })}${lowSun ? t('advice_low', { dir: compass(c.max.az) }) : ''}<span id="ptCloud"></span></div>`;
   } else {
     cls = 'partial';
     const pct = Math.min(c.obscuration * 100, 99.99);
@@ -237,13 +286,10 @@ function renderCard() {
     body = `
       <p class="verdict partial">${t('v_partial', { pct: pctS })}</p>
       <p class="locname">${name}</p>
-      <div class="bigstat">${pctS}%</div>
+      <div class="bigstat">${pctS}<small>%</small></div>
       <p>${pct > 98 ? t('p_close') : ''}${near.d < 999 ? t('p_edge', { km: Math.round(near.d), dir: compass(br) }) : t('p_far')}</p>
-      <div class="timeline">
-        <div class="tl"><span>${t('tl_p_start')}</span><b>${fmtTime(c.c1?.utcMs)}</b></div>
-        <div class="tl hot"><span>${t('tl_max')}</span><b>${fmtTime(c.max.utcMs)}</b></div>
-        <div class="tl"><span>${c.c4 && c.c4.alt < -0.8 ? t('tl_sunset') : t('tl_p_end')}</span><b>${c.c4 && c.c4.alt < -0.8 ? '—' : fmtTime(c.c4?.utcMs)}</b></div>
-      </div>
+      ${axisHtml(c, lat, lon)}
+      ${horizonHtml(c.max.alt, c.max.az)}
       <div class="advice">${t('p_nearest')}${sugg.map(({ s, d }) =>
         `<b>${s.name}</b> (${Math.round(d)} km ${compass(bearingDeg([lat, lon], [s.lat, s.lon]))}, ${fmtDur(s.c.totalitySec)})`).join(' · ')}
         <span id="ptCloud"></span></div>`;
@@ -314,7 +360,7 @@ function renderSpots() {
   for (const s of (showAllSpots ? ranked : ranked.slice(0, 12))) {
     const li = document.createElement('li');
     li.innerHTML = `
-      <div class="cloudpct" style="background:${cloudColor(s.cloud)}22;color:${cloudColor(s.cloud)}">${s.cloud == null ? '—' : s.cloud + '%'}<br><small style="font-weight:400">${t('lbl_cloud')}</small></div>
+      <div class="cloudpct" style="color:${cloudColor(s.cloud)}">${s.cloud == null ? '—' : s.cloud + '%'}<small>${t('lbl_cloud')}</small></div>
       <div class="name"><b>${s.name}</b><span>${spotNote(s)} · ${t('spot_sub', { time: fmtTime(s.c.c2.utcMs, s.tz, true), alt: s.c.max.alt.toFixed(0) })} · <a class="stay" href="${staysUrl(s.name)}" target="_blank" rel="sponsored noopener">${t('link_hotels')}</a></span></div>
       <div class="dur"><b>${fmtDur(s.c.totalitySec)}</b><span>${t('lbl_totality')}</span></div>`;
     li.querySelector('a.stay').addEventListener('click', (e) => e.stopPropagation());

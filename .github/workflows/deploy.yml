@@ -26,7 +26,7 @@ jobs:
           mkdir -p /tmp/stage
           cp index.html style.css app.js i18n.js engine.mjs path-data.js \
              sw.js manifest.webmanifest favicon.svg wrangler.jsonc /tmp/stage/
-          cp -r icons vendor /tmp/stage/
+          cp -r icons vendor fonts /tmp/stage/
       - name: Deploy to Cloudflare Workers
         if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
         uses: cloudflare/wrangler-action@v3
