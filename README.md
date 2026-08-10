@@ -47,8 +47,9 @@ The engine is generic: feed it another eclipse's Besselian elements
   forecast works offline. Installable (manifest + icons).
 
 No build step, no dependencies — static files only. `python3 -m http.server`
-to run locally. Deploys anywhere; `.github/workflows/pages.yml` auto-deploys
-to GitHub Pages on every push to `main`.
+to run locally. `.github/workflows/deploy.yml` deploys to Cloudflare Workers
+(eclipsefinders.com) on every push to `main` once the repo secrets
+`CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` are set.
 
 ⚠️ Educational tool: path-edge accuracy is ≈1–2 km (lunar-limb effects are
 not modelled). Don't plan to stand on the edge of the path — move well inside.
