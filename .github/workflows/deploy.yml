@@ -19,18 +19,24 @@ concurrency:
 jobs:
   cloudflare:
     runs-on: ubuntu-latest
+    # `secrets` isn't allowed in `if:` — expose it via env and test that.
+    env:
+      HAS_CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - name: Stage public files
         run: |
-          mkdir -p /tmp/stage
+          mkdir -p stage
           cp index.html style.css app.js i18n.js engine.mjs path-data.js \
-             sw.js manifest.webmanifest favicon.svg wrangler.jsonc /tmp/stage/
-          cp -r icons vendor fonts /tmp/stage/
+             sw.js manifest.webmanifest favicon.svg wrangler.jsonc stage/
+          cp -r icons vendor fonts stage/
       - name: Deploy to Cloudflare Workers
-        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        if: env.HAS_CF_TOKEN == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: /tmp/stage
+          workingDirectory: stage
+      - name: No secrets yet — skipping deploy
+        if: env.HAS_CF_TOKEN != 'true'
+        run: echo "CLOUDFLARE_API_TOKEN secret not set; site unchanged. Add the secrets to enable auto-deploys."
