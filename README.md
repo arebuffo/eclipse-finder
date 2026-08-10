@@ -1,7 +1,8 @@
 # Eclipse Finder — Totality Finder PWA
 
-Installable PWA for the **total solar eclipse of Wednesday 12 August 2026**
-(Iceland → northern Spain → Balearics). Answers two questions:
+Installable, bilingual (English/Spanish) PWA for the **total solar eclipse of
+Wednesday 12 August 2026** (Iceland → northern Spain → Balearics). Language is
+auto-detected from the device, with a manual ES/EN toggle. Answers two questions:
 
 1. **Will I see totality from where I am?** — geolocation (or tap the map /
    search a city) → verdict, totality duration, exact local contact times,
@@ -10,6 +11,17 @@ Installable PWA for the **total solar eclipse of Wednesday 12 August 2026**
 2. **Where's the best place to watch?** — ranked list of spots in the path,
    ordered by the live Open-Meteo cloud-cover forecast for eclipse hour
    (falls back to typical August cloudiness offline).
+
+## Configuration knobs (top of `app.js`)
+
+- `AFFIL.amazonTag` / `AFFIL.bookingAid` — affiliate IDs for the
+  eclipse-glasses link (safety card) and the per-spot Booking stay links.
+  Links work as plain links until set.
+- `CAPTURE_ENDPOINT` — where the "notify me for 2027" form posts. Ships with
+  FormSubmit (delivers signups to the owner's inbox; the first submission
+  triggers a one-time activation email). Swap for Buttondown/MailerLite/etc.
+  later without touching the UI.
+- UI strings live in `i18n.js` (`STR.en` / `STR.es`).
 
 The engine is generic: feed it another eclipse's Besselian elements
 (`engine.mjs` → `ELEMENTS`) and regenerate the path to cover future events —
