@@ -111,3 +111,16 @@ footer p { margin: 4px 0; }
   header { flex-wrap: wrap; }
   .bigstat { font-size: 28px; }
 }
+
+/* --- language toggle, email capture, affiliate links --- */
+.headright { display: flex; align-items: center; gap: 8px; }
+.btn.lang { padding: 6px 10px; font-size: 13px; font-weight: 700; color: var(--accent2); }
+.email-card { border-color: rgba(255, 179, 71, .35); }
+.email-card .emailbody { margin: 0 0 10px; font-size: 14px; color: var(--ink); }
+#emailInput { flex: 1; min-width: 180px; background: var(--card2); border: 1px solid var(--line); color: var(--ink); border-radius: 12px; padding: 10px 12px; font-size: 15px; }
+#emailMsg { color: var(--good); font-size: 14px; }
+.spots .name a.stay { color: var(--accent2); text-decoration: none; }
+.spots .name a.stay:hover { text-decoration: underline; }
+.glasses { margin: 10px 0 0; }
+.glasses a { color: var(--accent2); font-weight: 600; text-decoration: none; }
+.glasses a:hover { text-decoration: underline; }

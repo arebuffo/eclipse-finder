@@ -4,8 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Eclipse 2026 · Totality Finder</title>
-  <meta name="description" content="Total solar eclipse, 12 August 2026 — check if totality is visible from your location, and find the best place in Spain (or Iceland) to watch it, with live cloud forecasts.">
+  <meta name="description" content="Total solar eclipse, 12 August 2026 — check if totality is visible from your location, and find the best place in Spain (or Iceland) to watch it, with live cloud forecasts. / Eclipse total del 12 de agosto de 2026: comprueba si verás la totalidad desde tu ubicación.">
   <meta name="theme-color" content="#0b1220">
+  <meta property="og:title" content="Eclipse 2026 — will you see totality? / ¿Verás la totalidad?">
+  <meta property="og:description" content="Check your exact location against the path of the 12 Aug 2026 total solar eclipse over Spain & Iceland — times, duration, and the clearest skies to chase.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="icons/icon-512.png">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -20,46 +24,61 @@
       <span class="logo" aria-hidden="true"></span>
       <div>
         <h1>Eclipse 2026</h1>
-        <p class="sub">Total solar eclipse · Wed 12 Aug 2026 · Spain &amp; Iceland</p>
+        <p class="sub" data-i18n="sub">Total solar eclipse · Wed 12 Aug 2026 · Spain &amp; Iceland</p>
       </div>
     </div>
-    <div id="countdown" class="countdown" aria-live="off">–</div>
+    <div class="headright">
+      <button id="langBtn" class="btn lang" aria-label="Cambiar idioma / switch language">ES</button>
+      <div id="countdown" class="countdown" aria-live="off">–</div>
+    </div>
   </header>
 
   <main>
     <section id="status" class="card status-card">
-      <p class="hint">Find out if the total eclipse is visible from where you are:</p>
+      <p class="hint" data-i18n="hint_find">Find out if the total eclipse is visible from where you are:</p>
       <div class="controls">
-        <button id="locateBtn" class="btn primary">📍 Use my location</button>
+        <button id="locateBtn" class="btn primary" data-i18n="btn_locate">📍 Use my location</button>
         <input id="citySearch" list="cityList" placeholder="…or type a city" autocomplete="off">
         <datalist id="cityList"></datalist>
       </div>
-      <p class="hint small">You can also tap anywhere on the map.</p>
+      <p class="hint small" data-i18n="hint_tap">You can also tap anywhere on the map.</p>
     </section>
 
     <section class="card map-card">
       <div id="map" role="application" aria-label="Eclipse path map"></div>
       <div class="legend">
-        <span><i class="sw path"></i> Path of totality</span>
-        <span><i class="sw center"></i> Centre line (longest)</span>
-        <span><i class="sw c0"></i><i class="sw c1"></i><i class="sw c2"></i><i class="sw c3"></i> Cloud forecast</span>
+        <span><i class="sw path"></i><span data-i18n="legend_path">Path of totality</span></span>
+        <span><i class="sw center"></i><span data-i18n="legend_center">Centre line (longest)</span></span>
+        <span><i class="sw c0"></i><i class="sw c1"></i><i class="sw c2"></i><i class="sw c3"></i><span data-i18n="legend_cloud">Cloud forecast</span></span>
       </div>
     </section>
 
     <section class="card">
-      <h2>Best places to watch <span class="muted">— ranked by cloud forecast at eclipse time</span></h2>
-      <p id="wxNote" class="hint small">Loading cloud forecast…</p>
+      <h2><span data-i18n="spots_h2">Best places to watch</span> <span class="muted" data-i18n="spots_sub">— ranked by cloud forecast at eclipse time</span></h2>
+      <p id="wxNote" class="hint small" data-i18n="wx_loading">Loading cloud forecast…</p>
       <ol id="spots" class="spots"></ol>
     </section>
 
+    <section class="card email-card">
+      <h2 data-i18n="email_h2">📬 Don't miss the next one</h2>
+      <p class="emailbody" data-i18n-html="email_body"></p>
+      <form id="emailForm" class="controls" novalidate>
+        <input id="emailInput" type="email" required placeholder="you@email.com" autocomplete="email" inputmode="email">
+        <input type="text" name="_honey" id="honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-5000px">
+        <button id="emailBtn" class="btn primary" type="submit" data-i18n="email_btn">Notify me</button>
+      </form>
+      <p id="emailMsg" class="hint small" hidden></p>
+    </section>
+
     <section class="card safety">
-      <h2>⚠️ Eye safety</h2>
-      <p>Use certified <strong>ISO 12312-2 eclipse glasses</strong> for every partial phase — ordinary sunglasses are not safe. Only during the brief <strong>total</strong> phase (Moon fully covering the Sun) may you look with the naked eye. In Spain the Sun will be <strong>very low in the west-northwest</strong>: choose a spot with a completely open WNW horizon (sea, plain or hilltop).</p>
+      <h2 data-i18n="safety_h2">⚠️ Eye safety</h2>
+      <p data-i18n-html="safety_body"></p>
+      <p class="glasses"><a id="glassesLink" href="#" target="_blank" rel="sponsored noopener" data-i18n="safety_link">🕶️ Get certified eclipse glasses (ISO 12312-2) →</a></p>
     </section>
 
     <footer>
-      <p>Computed from NASA/GSFC Besselian elements (F. Espenak) · path edge accurate to ≈1–2 km — don't stand on the edge, move well inside · times auto-adjust to your device's time zone · cloud data: Open-Meteo · map © OpenStreetMap contributors</p>
-      <p>Works offline once installed (except map tiles &amp; forecast). Add it to your home screen for eclipse day! 🌘</p>
+      <p data-i18n="footer_1"></p>
+      <p data-i18n="footer_2"></p>
     </footer>
   </main>
 
